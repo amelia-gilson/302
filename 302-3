@@ -1,0 +1,77 @@
+function getrfRook!(A)
+    n=size(A,1)
+    P_row = collect(1:n); P_col = collect(1:n);
+    for k=1:n
+        counter = 0
+        row = 1; row0 = 0; col =1; col0=0;
+        while row != row0 || col != col0
+            counter += 1
+            @show (k, counter)
+            row0, col0 = row, col
+            row_A = A[row+k-1, k:n]
+            for p = 1: n-k+1
+                if k != 1
+                    for l = 1: k-1
+                        row_A[p] -= A[row+k-1, l]*A[l, p+k-1]
+                    end
+                end
+            end
+            @show(2)
+            row_A = abs.(row_A[1:n-k+1])
+            @show(3)
+            col = findmax(row_A)[2]
+            col_A = A[k:n, col+k-1]
+            if k != 1
+                for p = 1: n-k+1
+                    for l= 1: k-1
+                        col_A[p] -= A[p+k-1,l]*A[l,col+k-1]
+                    end
+                end
+            end
+            @show(4) 
+            @show(4)
+            col_A = abs.(col_A)
+            row = findmax(col_A)[2]
+            @show(5)
+            Amax = A[row, col]
+            @show(6)
+            flush(STDOUT)
+            for l = 1: k-1
+                Amax -= A[row, l]*A[l, col]
+            end
+            Amax = abs.(Amax)
+            if Amax < 10e-10
+                return P_row, P_col
+            end
+        end
+#dont change ---
+        row +=k-1, col+=k-1
+        P_row[k], P_row[row] = P_row[row], P_row[k]
+        P_col[k], P_col[col] = P_col[col], P_col[k]
+        for j=1:n
+            A[k,j], A[row,j] = A[row,j], A[k,j]
+        end
+        for i=1:n
+            A[i,k], A[i,col] = A[i,col], A[i,k]
+        end
+#End of perm-------
+        if k != 1
+            for j=k, i=k:n
+                for l=1:k-1
+                    A[i,j] -= A[i,l]*A[l,j]
+                end
+            end
+            for j=k+1:n, i=k
+                for l=1:k-1
+                    A[i,j] -= A[i,l]*A[l,j]
+                end
+            end
+        end
+        if A[k,k] != 0
+            for i=k+1:n
+                A[i,k] /= A[k,k]
+            end
+        end
+    end
+    return P_row, P_col
+end
