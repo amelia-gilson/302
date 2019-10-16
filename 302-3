@@ -35,7 +35,6 @@ function getrfRook!(A)
             @show(5)
             Amax = A[row, col]
             @show(6)
-            flush(STDOUT)
             for l = 1: k-1
                 Amax -= A[row, l]*A[l, col]
             end
